@@ -12,6 +12,7 @@ import LoginForm from "./Components/loginForm";
 import Logout from "./Components/logout";
 import NotFound from "./Components/notFound";
 import { getCurrentUser } from "./services/authService";
+import PostForm from "./Components/postForm";
 
 class App extends Component {
   state = {};
@@ -30,6 +31,7 @@ class App extends Component {
         <main className="container">
           <Switch>
             <Route path="/posts/:id" component={PostPage} />
+            <Route path="/post/edit/:id" component={PostForm} />
             <Route path="/posts" component={Posts} />
             <Route path="/register" component={RegisterForm} />
             <Route path="/login" component={LoginForm} />
