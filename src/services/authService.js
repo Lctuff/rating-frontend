@@ -21,7 +21,6 @@ export function logout() {
 export function getCurrentUser() {
   try {
     const jwt = localStorage.getItem("token");
-    console.log(jwt);
     return jwtDecode(jwt);
   } catch (error) {
     return null;

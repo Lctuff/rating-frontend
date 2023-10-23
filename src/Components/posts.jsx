@@ -13,7 +13,7 @@ class Posts extends Component {
   render() {
     return (
       <div className="row">
-        <Card data={this.state.posts} buttonLabel="View post" />
+        <Card data={this.state.posts} buttonLabel="View post" link="/posts" />
       </div>
     );
   }
