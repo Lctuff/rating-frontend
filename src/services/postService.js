@@ -24,3 +24,6 @@ export function savePost(post) {
 export function deletePost(postId) {
   return http.delete(apiEndpoint + "/" + postId);
 }
+export function uploadImg(data) {
+  return http.post(config.nonapi + "/upload", data);
+}

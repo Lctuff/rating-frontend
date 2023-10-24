@@ -1,7 +1,8 @@
 import React from "react";
+
 import Form from "./common/form";
 import Joi from "joi-browser";
-import { getPost, savePost } from "../services/postService";
+import { getPost, savePost, uploadImg } from "../services/postService";
 
 class PostForm extends Form {
   state = {
@@ -20,7 +21,7 @@ class PostForm extends Form {
     title: Joi.string().required().label("Title"),
     description: Joi.string().required().label("Description"),
     review: Joi.string().required().label("Review"),
-    img: Joi.string().required().label("Image"),
+    img: Joi.string().label("Image"),
     rating: Joi.number().required().max(5).min(1).label("Rating"),
     category: Joi.string().required().label("Category"),
   };
@@ -61,13 +62,16 @@ class PostForm extends Form {
     this.props.history.push("/posts");
   };
 
-  onImageChange = (event) => {
-    if (event.target.files && event.target.files[0]) {
-      let img = event.target.files[0];
-      this.setState({
-        img: URL.createObjectURL(img),
-      });
-    }
+  uploadHandler = async (event) => {
+    var imgdata = new FormData();
+
+    imgdata.append("files", event.target.files[0]);
+
+    const link = await uploadImg(imgdata);
+
+    const data = { ...this.state.data };
+    data[event.target.name] = link.data;
+    this.setState({ data });
   };
 
   render() {
@@ -81,7 +85,7 @@ class PostForm extends Form {
             type="file"
             id="img"
             name="img"
-            onChange={(this.onImageChange, this.handleChange)}
+            onChange={this.uploadHandler}
           />
           {this.renderInput("title", "Title")}
           {this.renderInput("description", "Description")}
