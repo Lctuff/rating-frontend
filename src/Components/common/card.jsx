@@ -6,9 +6,9 @@ class Card extends Component {
   render() {
     const { data } = this.props;
     return (
-      <div className="row row-cols-1 row-cols-md-3 g-4">
+      <div className="row">
         {data.map((item) => (
-          <div key={item._id} className="col">
+          <div key={item._id} className="col-6 mb-4">
             <div className="card">
               <img src={item.img} className="card-img-top" alt="..." />
               <div className="card-body">

@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import _ from "lodash";
+import ListGroup from "./common/listGroup";
 
 class Posts extends Component {
   state = {
@@ -19,8 +20,26 @@ class Posts extends Component {
 
   async componentDidMount() {
     const { data: posts } = await getPosts();
-    this.setState({ posts });
+
+    const ratings = [
+      { rating: "All Reviews" },
+      { rating: 1, id: 1 },
+      { rating: 2, id: 2 },
+      { rating: 3, id: 3 },
+      { rating: 4, id: 4 },
+      { rating: 5, id: 5 },
+    ];
+
+    this.setState({ posts, ratings });
   }
+
+  handleRatingSelect = (rating) => {
+    this.setState({
+      selectedRating: rating,
+      searchQuery: "",
+      currentPage: 1,
+    });
+  };
 
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
@@ -40,8 +59,8 @@ class Posts extends Component {
       filtered = allPosts.filter((p) =>
         p.title.toLowerCase().startsWith(searchQuery.toLowerCase())
       );
-    else if (selectedRating && selectedRating._id)
-      filtered = allPosts.filter((p) => p.rating === selectedRating);
+    else if (selectedRating && selectedRating.id)
+      filtered = allPosts.filter((p) => p.rating === selectedRating.rating);
     const sorted = _.orderBy(filtered, [sortColumn.path], [sortColumn.order]);
     const posts = paginate(sorted, currentPage, pageSize);
 
@@ -54,6 +73,16 @@ class Posts extends Component {
     const { user } = this.props;
     return (
       <div className="row">
+        <div className="col-3">
+          <ListGroup
+            items={this.state.ratings}
+            valueProperty="id"
+            textProperty="rating"
+            titleProperty="Was It Good OR Bad"
+            onItemSelect={this.handleRatingSelect}
+            selectedItem={this.state.selectedRating}
+          />
+        </div>
         <div className="col">
           <Link
             to="/post/edit/new"
@@ -63,7 +92,7 @@ class Posts extends Component {
             New Post
           </Link>
           <Card data={posts} buttonLabel="View post" link="/posts" />
-          <br />
+
           <Pagination
             itemsCount={totalCount}
             pageSize={pageSize}
