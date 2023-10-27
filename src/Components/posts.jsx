@@ -6,6 +6,7 @@ import Pagination from "./common/pagination";
 import { paginate } from "../utils/paginate";
 import _ from "lodash";
 import ListGroup from "./common/listGroup";
+import DropDown from "./common/dropdown";
 
 class Posts extends Component {
   state = {
@@ -43,6 +44,10 @@ class Posts extends Component {
 
   handlePageChange = (page) => {
     this.setState({ currentPage: page });
+  };
+
+  handleSort = (sortColumn) => {
+    this.setState({ sortColumn });
   };
 
   getPageData = () => {
@@ -84,13 +89,21 @@ class Posts extends Component {
           />
         </div>
         <div className="col">
-          <Link
-            to="/post/edit/new"
-            className="btn btn-primary"
-            style={{ marginBottom: 20 }}
-          >
-            New Post
-          </Link>
+          <div className="row">
+            <div className="col-10">
+              <DropDown onSort={this.handleSort} />
+            </div>
+            <div className="col">
+              <Link
+                to="/post/edit/new"
+                className="btn btn-primary"
+                style={{ marginBottom: 20 }}
+              >
+                New Post
+              </Link>
+            </div>
+          </div>
+
           <Card data={posts} buttonLabel="View post" link="/posts" />
 
           <Pagination

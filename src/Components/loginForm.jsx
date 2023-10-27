@@ -23,7 +23,7 @@ class LoginForm extends Form {
 
       window.location = state ? state.from.pathname : "/";
     } catch (ex) {
-      if (ex.response && ex.response.status == 400) {
+      if (ex.response && ex.response.status === 400) {
         const errors = { ...this.state.errors };
         errors.email = ex.response.data;
         this.setState({ errors });
