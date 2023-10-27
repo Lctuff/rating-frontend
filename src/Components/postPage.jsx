@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 
 import { getPost } from "../services/postService";
+import Stars from "./common/stars";
 
 class PostPage extends Component {
   state = {
@@ -48,15 +49,14 @@ class PostPage extends Component {
 
     return (
       <div className="row">
-        <div>
-          <img src={data.img} className="rounded float-start" />
-          <h1>
-            {data.title} {data.rating}/5
-          </h1>
+        <div style={{ height: 300 }}>
+          <img src={data.img} className="me-2 rounded float-start h-100" />
+          <h1>{data.title}</h1>
+          <Stars rating={parseInt(data.rating)} />
           <h4>{data.category}</h4>
           <h2>{data.description}</h2>
         </div>
-        <div>
+        <div className="border-top mt-4">
           <h3>{data.review}</h3>
         </div>
       </div>
