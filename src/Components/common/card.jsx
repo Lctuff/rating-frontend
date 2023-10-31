@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import _ from "lodash";
 import { Link } from "react-router-dom";
+import Stars from "./stars";
 
 class Card extends Component {
   render() {
@@ -12,7 +13,10 @@ class Card extends Component {
             <div className="card">
               <img src={item.img} className="card-img-top" alt="..." />
               <div className="card-body">
-                <h5 className="card-title">{item.title}</h5>
+                <h5 className="card-title">
+                  {item.title}
+                  <Stars rating={item.rating} />{" "}
+                </h5>
                 <p className="card-text">{item.description}</p>
 
                 <Link
