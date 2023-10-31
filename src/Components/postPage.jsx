@@ -4,6 +4,8 @@ import { getPost, deletePost } from "../services/postService";
 import Stars from "./common/stars";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { saveComment } from "../services/commentService";
+import { map } from "lodash";
 
 class PostPage extends Component {
   state = {
@@ -15,6 +17,10 @@ class PostPage extends Component {
       img: "",
       rating: "",
       comments: [],
+    },
+
+    comment: {
+      text: "",
     },
   };
 
@@ -47,6 +53,27 @@ class PostPage extends Component {
       comments: post.comments,
     };
   }
+
+  handleCommentSubmit = async (e) => {
+    e.preventDefault();
+
+    const user = this.props.user._id;
+
+    const req = {
+      text: this.state.comment.text,
+      user: user,
+    };
+
+    const { data: comment } = await saveComment(this.state.data, req);
+    const data = { ...this.state.data };
+
+    const comments = [comment, ...this.state.data.comments];
+    data["comments"] = comments;
+    this.setState({ data: data });
+  };
+  handleCommentChange = async (comment) => {
+    this.setState({ comment: { text: comment } });
+  };
 
   handleDelete = async (data) => {
     const originalPost = this.state.data;
@@ -100,6 +127,46 @@ class PostPage extends Component {
         </div>
         <div className="border-top mt-4">
           <h3>{data.review}</h3>
+        </div>
+        <div className="border-top">
+          <form onSubmit={this.handleCommentSubmit}>
+            <input
+              type="text"
+              name="text"
+              className="form-control my-3"
+              placeholder="Comment..."
+              value={this.state.comment.text}
+              onChange={(e) => this.handleCommentChange(e.currentTarget.value)}
+            />
+            <button type="submit" className="btn btn-primary">
+              Send
+            </button>
+          </form>
+
+          <table className="table">
+            <tbody>
+              {data.comments.map((comment) => (
+                <tr key={comment._id}>
+                  <td>
+                    <div className="row">
+                      <div className="col-1">
+                        <img
+                          src={comment.user.profileImg}
+                          alt=""
+                          style={{ width: 100 }}
+                        />{" "}
+                      </div>
+                      <div className="col">
+                        <br />
+                        {comment.user.name} <br />
+                        {comment.text}
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     );

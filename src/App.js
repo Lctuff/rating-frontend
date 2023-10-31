@@ -30,9 +30,15 @@ class App extends Component {
         <br />
         <main className="container">
           <Switch>
-            <Route path="/posts/:id" component={PostPage} />
+            <Route
+              path="/posts/:id"
+              render={(props) => <PostPage {...props} user={user} />}
+            />
             <Route path="/post/edit/:id" component={PostForm} />
-            <Route path="/posts" component={Posts} />
+            <Route
+              path="/posts"
+              render={(props) => <Posts {...props} user={user} />}
+            />
             <Route path="/register" component={RegisterForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/logout" component={Logout} />
