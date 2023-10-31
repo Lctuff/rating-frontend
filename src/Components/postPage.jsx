@@ -12,6 +12,7 @@ class PostPage extends Component {
       category: "",
       img: "",
       rating: "",
+      comments: [],
     },
   };
 
@@ -41,6 +42,7 @@ class PostPage extends Component {
       img: post.img,
       category: post.category,
       rating: post.rating,
+      comments: post.comments,
     };
   }
 

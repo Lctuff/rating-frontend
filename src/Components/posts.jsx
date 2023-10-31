@@ -7,6 +7,7 @@ import { paginate } from "../utils/paginate";
 import _ from "lodash";
 import ListGroup from "./common/listGroup";
 import DropDown from "./common/dropdown";
+import SearchBox from "./common/searchBox";
 
 class Posts extends Component {
   state = {
@@ -33,6 +34,14 @@ class Posts extends Component {
 
     this.setState({ posts, ratings });
   }
+
+  handleSearch = (query) => {
+    this.setState({
+      searchQuery: query,
+      selectedSeverity: null,
+      currentPage: 1,
+    });
+  };
 
   handleRatingSelect = (rating) => {
     this.setState({
@@ -90,7 +99,13 @@ class Posts extends Component {
         </div>
         <div className="col">
           <div className="row">
-            <div className="col-10">
+            <div className="col-6" style={{ marginTop: -15 }}>
+              <SearchBox
+                value={this.state.searchQuery}
+                onChange={this.handleSearch}
+              />
+            </div>
+            <div className="col-4" style={{ marginRight: 49 }}>
               <DropDown onSort={this.handleSort} />
             </div>
             <div className="col">
