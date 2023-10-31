@@ -79,7 +79,10 @@ class PostForm extends Form {
       <div>
         <h1 className="mb-3">Post Form</h1>
         <form onSubmit={this.handleSubmit}>
-          <label htmlFor="img">Image</label> <br />
+          <label htmlFor="img">
+            Image (if post already has an image it is still there)
+          </label>{" "}
+          <br />
           <input
             className="form-control"
             type="file"

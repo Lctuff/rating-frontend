@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import _ from "lodash";
+
 import { Link } from "react-router-dom";
 import Stars from "./stars";
 
