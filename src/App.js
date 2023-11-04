@@ -13,13 +13,14 @@ import Logout from "./Components/logout";
 import NotFound from "./Components/notFound";
 import { getCurrentUser } from "./services/authService";
 import PostForm from "./Components/postForm";
+import { ToastContainer } from "react-toastify";
 
 class App extends Component {
   state = {};
 
   componentDidMount() {
     const user = getCurrentUser();
-    this.setState({ user });
+    this.setState({ user: user });
   }
 
   render() {
@@ -27,6 +28,7 @@ class App extends Component {
     return (
       <div>
         <NavBar user={user} />
+        <ToastContainer />
         <br />
         <main className="container">
           <Switch>

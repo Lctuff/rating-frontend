@@ -8,8 +8,12 @@ export function saveComment(post, comment) {
 
     delete body._id;
 
-    return http.put(apiEndpoint + "/" + post._id, body);
+    return http.put(apiEndpoint + "/" + comment._id, body);
   }
 
   return http.post(apiEndpoint + "/" + post._id, comment);
+}
+
+export function deleteComment(comment) {
+  return http.delete(apiEndpoint + "/" + comment);
 }

@@ -4,8 +4,7 @@ import { getPost, deletePost } from "../services/postService";
 import Stars from "./common/stars";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { saveComment } from "../services/commentService";
-import { map } from "lodash";
+import { deleteComment, saveComment } from "../services/commentService";
 
 class PostPage extends Component {
   state = {
@@ -57,20 +56,73 @@ class PostPage extends Component {
   handleCommentSubmit = async (e) => {
     e.preventDefault();
 
-    const user = this.props.user._id;
+    const user = this.props.user;
 
     const req = {
       text: this.state.comment.text,
-      user: user,
+      user: user._id,
     };
 
     const { data: comment } = await saveComment(this.state.data, req);
     const data = { ...this.state.data };
+    comment["user"] = user;
 
     const comments = [comment, ...this.state.data.comments];
     data["comments"] = comments;
     this.setState({ data: data });
   };
+
+  handleCommentEdit = async (comment) => {
+    const text = prompt("Please Edit comment");
+
+    const req = {
+      _id: comment._id,
+      text: text,
+      user: comment.user,
+    };
+
+    const originalComments = this.state.data.comments;
+    const filteredComments = originalComments.filter(
+      (c) => c._id !== comment._id
+    );
+
+    const comments = [req, ...filteredComments];
+
+    const data = { ...this.state.data };
+    data["comments"] = comments;
+
+    this.setState({ data: data });
+    try {
+      const result = await saveComment(this.state.data, req);
+      console.log(result);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("The comment did not save");
+      this.setState({ tasks: originalComments });
+    }
+  };
+
+  handleCommentDelete = async (comment) => {
+    const originalComments = this.state.data.comments;
+    const comments = originalComments.filter((c) => c._id !== comment._id);
+
+    const data = { ...this.state.data };
+    data["comments"] = comments;
+
+    this.setState({ data: data });
+
+    try {
+      await deleteComment(comment._id);
+    } catch (ex) {
+      if (ex.response && ex.response.status === 404)
+        toast.error("This comment has already been deleted");
+
+      data["comments"] = originalComments;
+
+      this.setState({ data: data });
+    }
+  };
+
   handleCommentChange = async (comment) => {
     this.setState({ comment: { text: comment } });
   };
@@ -87,13 +139,14 @@ class PostPage extends Component {
       this.props.history.push("/posts");
     } catch (ex) {
       if (ex.response && ex.response.status === 404)
-        toast.error("This movie has already been deleted");
+        toast.error("This post has already been deleted");
       this.setState({ data: originalPost });
     }
   };
 
   render() {
     const { data } = this.state;
+    const { user } = this.props;
 
     return (
       <div className="row">
@@ -129,19 +182,23 @@ class PostPage extends Component {
           <h3>{data.review}</h3>
         </div>
         <div className="border-top">
-          <form onSubmit={this.handleCommentSubmit}>
-            <input
-              type="text"
-              name="text"
-              className="form-control my-3"
-              placeholder="Comment..."
-              value={this.state.comment.text}
-              onChange={(e) => this.handleCommentChange(e.currentTarget.value)}
-            />
-            <button type="submit" className="btn btn-primary">
-              Send
-            </button>
-          </form>
+          {user && (
+            <form onSubmit={this.handleCommentSubmit}>
+              <input
+                type="text"
+                name="text"
+                className="form-control my-3"
+                placeholder="Comment..."
+                value={this.state.comment.text}
+                onChange={(e) =>
+                  this.handleCommentChange(e.currentTarget.value)
+                }
+              />
+              <button type="submit" className="btn btn-primary">
+                Send
+              </button>
+            </form>
+          )}
 
           <table className="table">
             <tbody>
@@ -153,13 +210,32 @@ class PostPage extends Component {
                         <img
                           src={comment.user.profileImg}
                           alt=""
-                          style={{ width: 100 }}
+                          style={{ width: 100, height: 100 }}
                         />{" "}
                       </div>
                       <div className="col">
                         <br />
                         {comment.user.name} <br />
                         {comment.text}
+                      </div>
+                      <div className="col">
+                        {user && comment.user._id === user._id ? (
+                          <div>
+                            <button
+                              className="btn btn-primary"
+                              onClick={() => this.handleCommentEdit(comment)}
+                            >
+                              Edit Comment
+                            </button>
+                            {"      "}
+                            <button
+                              className="btn btn-danger"
+                              onClick={() => this.handleCommentDelete(comment)}
+                            >
+                              Delete Comment
+                            </button>
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </td>
