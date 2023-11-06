@@ -108,15 +108,17 @@ class Posts extends Component {
             <div className="col-4" style={{ marginRight: 49 }}>
               <DropDown onSort={this.handleSort} />
             </div>
-            <div className="col">
-              <Link
-                to="/post/edit/new"
-                className="btn btn-primary"
-                style={{ marginBottom: 20 }}
-              >
-                New Post
-              </Link>
-            </div>
+            {user && (
+              <div className="col">
+                <Link
+                  to="/post/edit/new"
+                  className="btn btn-primary"
+                  style={{ marginBottom: 20 }}
+                >
+                  New Post
+                </Link>
+              </div>
+            )}
           </div>
 
           <Card data={posts} buttonLabel="View post" link="/posts" />
