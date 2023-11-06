@@ -11,6 +11,7 @@ class Form extends Component {
   validate = () => {
     const options = { abortEarly: false };
     const { error } = Joi.validate(this.state.data, this.schema, options);
+
     if (!error) return null;
     const errors = {};
     for (let item of error.details) errors[item.path[0]] = item.message;
@@ -18,10 +19,22 @@ class Form extends Component {
   };
 
   validateProperty = ({ name, value }) => {
-    const obj = { [name]: value };
-    const schema = { [name]: this.schema[name] };
-    const { error } = Joi.validate(obj, schema);
-    return error ? error.details[0].message : null;
+    if (name === "confirmPassword") {
+      const { data } = this.state;
+      const obj = { newPassword: data.newPassword, [name]: value };
+      const schema = {
+        [name]: this.schema[name],
+        newPassword: this.schema["newPassword"],
+      };
+      const { error } = Joi.validate(obj, schema);
+      console.log(error);
+      return error ? error.details[0].message : null;
+    } else {
+      const obj = { [name]: value };
+      const schema = { [name]: this.schema[name] };
+      const { error } = Joi.validate(obj, schema);
+      return error ? error.details[0].message : null;
+    }
   };
   handleSubmit = (e) => {
     e.preventDefault();
@@ -34,12 +47,14 @@ class Form extends Component {
   };
   handleChange = ({ currentTarget: input }) => {
     const errors = { ...this.state.errors };
+    const data = { ...this.state.data };
+
     const errorMessage = this.validateProperty(input);
     if (errorMessage) errors[input.name] = errorMessage;
     else delete errors[input.name];
 
-    const data = { ...this.state.data };
     data[input.name] = input.value;
+
     this.setState({ data, errors });
   };
   renderButton(label) {

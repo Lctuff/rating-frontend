@@ -3,6 +3,7 @@ import React from "react";
 import Form from "./common/form";
 import Joi from "joi-browser";
 import { getPost, savePost, uploadImg } from "../services/postService";
+import { Redirect } from "react-router-dom";
 
 class PostForm extends Form {
   state = {
@@ -13,6 +14,7 @@ class PostForm extends Form {
       category: "",
       img: "",
       rating: "",
+      user: "",
     },
     errors: {},
   };
@@ -24,12 +26,18 @@ class PostForm extends Form {
     img: Joi.string().label("Image"),
     rating: Joi.number().required().max(5).min(1).label("Rating"),
     category: Joi.string().required().label("Category"),
+    user: Joi.string().required().label("User"),
   };
 
   async populatePost() {
     try {
       const postId = this.props.match.params.id;
-      if (postId === "new") return;
+      if (postId === "new") {
+        const newPost = { ...this.state.data };
+        newPost["user"] = this.props.user._id;
+
+        return this.setState({ data: newPost });
+      }
 
       const { data: post } = await getPost(postId);
 
@@ -42,6 +50,12 @@ class PostForm extends Form {
 
   async componentDidMount() {
     await this.populatePost();
+    if (
+      this.props.user &&
+      (this.props.user._id !== this.state.data.user || this.props.user.admin)
+    ) {
+      return <Redirect to="/" />;
+    }
   }
 
   mapToViewModel(post) {
@@ -53,6 +67,7 @@ class PostForm extends Form {
       img: post.img,
       category: post.category,
       rating: post.rating,
+      user: post.user._id,
     };
   }
 
@@ -75,6 +90,14 @@ class PostForm extends Form {
   };
 
   render() {
+    if (!this.props.user) {
+      console.log(this.state);
+      return (
+        <Redirect
+          to={{ pathname: "/login", state: { from: this.props.location } }}
+        />
+      );
+    }
     return (
       <div>
         <h1 className="mb-3">Post Form</h1>

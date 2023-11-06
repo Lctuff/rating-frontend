@@ -11,10 +11,16 @@ class Card extends Component {
         {data.map((item) => (
           <div key={item._id} className="col-6 mb-4">
             <div className="card">
-              <img src={item.img} className="card-img-top" alt="..." />
+              <img
+                src={item.img}
+                className="card-img-top"
+                alt="..."
+                style={{ height: 250 }}
+              />
               <div className="card-body">
                 <h5 className="card-title">
-                  {item.title}
+                  {item.title}{" "}
+                  <p className="fw-light fs-6">By:{item.user.name}</p>
                   <Stars rating={item.rating} />{" "}
                 </h5>
                 <p className="card-text">{item.description}</p>

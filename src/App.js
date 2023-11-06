@@ -3,6 +3,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import Posts from "./Components/posts";
 import PostPage from "./Components/postPage";
@@ -14,6 +15,8 @@ import NotFound from "./Components/notFound";
 import { getCurrentUser } from "./services/authService";
 import PostForm from "./Components/postForm";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./Components/common/protectedRoute";
+import User from "./Components/user";
 
 class App extends Component {
   state = {};
@@ -34,19 +37,24 @@ class App extends Component {
           <Switch>
             <Route
               path="/posts/:id"
-              render={(props) => <PostPage {...props} user={user} />}
+              component={(props) => <PostPage {...props} user={user} />}
             />
-            <Route path="/post/edit/:id" component={PostForm} />
+
+            <Route
+              path="/post/edit/:id"
+              render={(props) => <PostForm {...props} user={user} />}
+            />
             <Route
               path="/posts"
               render={(props) => <Posts {...props} user={user} />}
             />
+            <ProtectedRoute path="/profile" component={User} />
             <Route path="/register" component={RegisterForm} />
             <Route path="/login" component={LoginForm} />
             <Route path="/logout" component={Logout} />
             <Route path="/not-found" component={NotFound} />
             <Redirect from="/" exact to="/posts" />
-            <Redirect to="not-found" />
+            <Redirect to="/not-found" />
           </Switch>
         </main>
       </div>

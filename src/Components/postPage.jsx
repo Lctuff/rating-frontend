@@ -16,6 +16,7 @@ class PostPage extends Component {
       img: "",
       rating: "",
       comments: [],
+      user: {},
     },
 
     comment: {
@@ -50,6 +51,7 @@ class PostPage extends Component {
       category: post.category,
       rating: post.rating,
       comments: post.comments,
+      user: post.user,
     };
   }
 
@@ -65,6 +67,7 @@ class PostPage extends Component {
 
     const { data: comment } = await saveComment(this.state.data, req);
     const data = { ...this.state.data };
+
     comment["user"] = user;
 
     const comments = [comment, ...this.state.data.comments];
@@ -156,28 +159,32 @@ class PostPage extends Component {
             className="me-2 rounded float-start h-100"
             alt=""
           />
-          <h1>{data.title}</h1>
+          <h1>
+            {data.title} <p className="fw-light fs-5">By:{data.user.name}</p>
+          </h1>
           <Stars rating={parseInt(data.rating)} />
           <h4>{data.category}</h4>
           <h2>{data.description}</h2>
         </div>
-        <div className="col-2">
-          <Link className="btn btn-primary" to={`/post/edit/${data._id}`}>
-            Edit Post
-          </Link>
-          <br />
-          <br />
-          <button
-            className="btn btn-danger"
-            onClick={() => {
-              if (window.confirm("Delete Post?")) {
-                this.handleDelete(data);
-              }
-            }}
-          >
-            Delete Post
-          </button>
-        </div>
+        {user && (data.user._id === user._id || user.admin) ? (
+          <div className="col-2">
+            <Link className="btn btn-primary" to={`/post/edit/${data._id}`}>
+              Edit Post
+            </Link>
+            <br />
+            <br />
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                if (window.confirm("Delete Post?")) {
+                  this.handleDelete(data);
+                }
+              }}
+            >
+              Delete Post
+            </button>
+          </div>
+        ) : null}
         <div className="border-top mt-4">
           <h3>{data.review}</h3>
         </div>
@@ -219,7 +226,8 @@ class PostPage extends Component {
                         {comment.text}
                       </div>
                       <div className="col">
-                        {user && comment.user._id === user._id ? (
+                        {user &&
+                        (comment.user._id === user._id || user.admin) ? (
                           <div>
                             <button
                               className="btn btn-primary"
