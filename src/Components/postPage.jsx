@@ -94,8 +94,6 @@ class PostPage extends Component {
     const data = { ...this.state.data };
     data["comments"] = comments;
 
-    console.log("hello world");
-
     this.setState({ data: data });
     try {
       const result = await saveComment(this.state.data, req);
